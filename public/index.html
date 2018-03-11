@@ -29,7 +29,7 @@
           });
       }).then((subscription) => {
         endpoint = subscription.endpoint;
-        fetch('http://localhost:3000/register', {
+        fetch('https://ruseu-web-push.herokuapp.com/register', {
           method: 'post',
           headers: {
             'Content-type': 'application/json'
@@ -43,7 +43,7 @@
     document.getElementById('doIt').onclick = () => {
       var delay = document.getElementById('notification-delay').value;
       var ttl = document.getElementById('notification-ttl').value;
-      fetch('http://localhost:3000/sendNotification?endpoint=' + endpoint + '&delay=' + delay +
+      fetch('https://ruseu-web-push.herokuapp.com/sendNotification?endpoint=' + endpoint + '&delay=' + delay +
         '&ttl=' + ttl,
         {
           method: 'post',

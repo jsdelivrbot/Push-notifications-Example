@@ -18,9 +18,12 @@ webPush.setGCMAPIKey(process.env.GCM_API_KEY || null);
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(function(req, res){
+app.get('/', (req, res) => {
   res.sendfile(__dirname + "/public/index.html")
 });
+app.get('/testing', (req, res) => {
+  res.sendStatus(200);
+})
 
 app.post('/register', (req, res) => {
   console.log(req.body);
