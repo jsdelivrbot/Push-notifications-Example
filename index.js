@@ -2,10 +2,11 @@ const express = require('express');
 const app = express();
 const cors = require('cors')
 const webPush = require('web-push');
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
+const path = require('path');
 
 
-app.use(cors());
+
 
 webPush.setVapidDetails(
   'mailto:drus@qdqmedia.com',
@@ -15,7 +16,11 @@ webPush.setVapidDetails(
 
 webPush.setGCMAPIKey(process.env.GCM_API_KEY || null);
 
-app.get('/', (req, res) => res.send('Hello World!'))
+app.use(cors());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(function(req, res){
+  res.sendfile(__dirname + "/public/index.html")
+});
 
 app.post('/register', (req, res) => {
   console.log(req.body);
@@ -41,4 +46,4 @@ app.post('/sendNotification', (req, res) => {
   }, req.query.delay * 1000);
 });
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'))
+app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
