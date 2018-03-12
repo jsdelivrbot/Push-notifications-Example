@@ -21,14 +21,6 @@ webPush.setVapidDetails(
 
 webPush.setGCMAPIKey(process.env.GCM_API_KEY || null);
 
-const pushSubscription = {
-  endpoint: '< Push Subscription URL >',
-  keys: {
-    p256dh: 'BKOWm3Iz0Yg-k84Uk8a1YWaofSNAsYh3LRxVYPg6HVoivm2EH4s1Y73RQUsRN7m6rVeL9H33bxL9HCxs7d2DEvY',
-    auth: 'iyFVXcBo_cNBxK_g1wnsm_J8O_Lg0wmnwKUK7dF6Kn8'
-  }
-};
-
 let subscriptions = [];
 
 app.use(bodyParser.json())
@@ -55,22 +47,22 @@ app.post('/sendNotification', (req, res) => {
   const subscription = req.body;
 
   const payload = {
-    title: 'New Push Notifications',
+    title: 'RusEu Notifications',
     options: {
       lang: 'en',
-      body: 'Push Notification Body',
-      icon: 'https://blogs.glowscotland.org.uk/cl/strathdevonprimary/files/2015/11/success-icon.png',
+      body: 'Is this a good application?',
+      icon: 'https://lh3.ggpht.com/uA_9YvBqat-4ftl9Kn40fGuf_6GmDUKuba_Vjn2fo9CnojlOGandrcj2pLp67Q5Wb6I=w300',
       vibrate: [500, 100, 500],
       actions: [
         {
-          action: 'coffee-action',
-          title: 'Coffee',
-          icon: 'http://www.freepngimg.com/download/coffee/2-2-coffee-png-clipart.png'
+          action: 'accept',
+          title: 'Yes, awesome',
+          icon: 'http://dryicons.com/uploads/icon/preview/2810/icon_grid_1x_accept.png'
         },
         {
-          action: 'doughnut-action',
-          title: 'Doughnut',
-          icon: 'https://cdn2.iconfinder.com/data/icons/lovely-donuts/16/purple_donut-256.png'
+          action: 'dismiss',
+          title: 'No, very simple',
+          icon: 'https://cdn0.iconfinder.com/data/icons/social-messaging-ui-color-shapes/128/close-circle-red-256.pn'
         }
       ]
     }
