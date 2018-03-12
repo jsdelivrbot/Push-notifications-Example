@@ -7,10 +7,16 @@ const path = require('path');
 const bodyParser = require('body-parser');
 
 
+var vapidDetails = {
+  subject: 'mailto:drus@qdqmedia.com',
+  publicKey: 'BKOWm3Iz0Yg-k84Uk8a1YWaofSNAsYh3LRxVYPg6HVoivm2EH4s1Y73RQUsRN7m6rVeL9H33bxL9HCxs7d2DEvY',
+  privateKey: 'iyFVXcBo_cNBxK_g1wnsm_J8O_Lg0wmnwKUK7dF6Kn8'
+}
+
 webPush.setVapidDetails(
-  'mailto:drus@qdqmedia.com',
-  'BKOWm3Iz0Yg-k84Uk8a1YWaofSNAsYh3LRxVYPg6HVoivm2EH4s1Y73RQUsRN7m6rVeL9H33bxL9HCxs7d2DEvY',
-  'iyFVXcBo_cNBxK_g1wnsm_J8O_Lg0wmnwKUK7dF6Kn8'
+  vapidDetails.subject,
+  vapidDetails.publicKey,
+  vapidDetails.privateKey
 );
 
 webPush.setGCMAPIKey(process.env.GCM_API_KEY || null);
@@ -36,7 +42,6 @@ app.get('/subscriptions', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-  console.log(req.body, 'server body');
   const subscription = req.body;
   if (subscriptions.some((s) => s.name === subscription.name)) {
     res.sendStatus(200);
@@ -47,17 +52,25 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/sendNotification', (req, res) => {
-  const subscription = Object.assign(pushSubscription, {endpoint: req.body.endpoint});
-  console.log(JSON.stringify(subscription), 'pushNotification');
+  const subscription = req.body;
+  const payload = 'working';
+  const notification = {
+    endpoint: subscription.endpoint,
+    keys: {
+      p256dh: subscription.key,
+      auth: subscription.auth
+    }
+  };
+  console.log(JSON.stringify(notification), 'pushNotification');
   webPush
-  .sendNotification(pushSubscription, 'working')
+  .sendNotification(notification, payload)
   .then(() => {
     console.log("push notification has been sent");
     res.sendStatus(201);
   })
   .catch((error) => {
-    res.sendStatus(500);
     console.log(error);
+    res.sendStatus(500);
   });;
 });
 
