@@ -44,7 +44,7 @@ app.get('/subscriptions', (req, res) => {
 app.post('/register', (req, res) => {
   const subscription = req.body;
   if (subscriptions.some((s) => s.name === subscription.name)) {
-    res.sendStatus(200);
+    res.sendStatus(304);
   } else {
     subscriptions.push(subscription);
     res.sendStatus(201);
@@ -54,16 +54,8 @@ app.post('/register', (req, res) => {
 app.post('/sendNotification', (req, res) => {
   const subscription = req.body;
   const payload = 'working';
-  const notification = {
-    endpoint: subscription.endpoint,
-    keys: {
-      p256dh: subscription.key,
-      auth: subscription.auth
-    }
-  };
-  console.log(JSON.stringify(notification), 'pushNotification');
   webPush
-  .sendNotification(notification, payload)
+  .sendNotification(subscription, payload)
   .then(() => {
     console.log("push notification has been sent");
     res.sendStatus(201);

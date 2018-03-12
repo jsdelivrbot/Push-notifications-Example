@@ -1,19 +1,47 @@
 <html>
 
+<head>
+  <style>
+    table {
+      width:30%;
+    }
+    table, th, td {
+      border: 1px solid #333;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 5px;
+      text-align: left;
+      text-align: center;
+    }
+    table#t01 tr:nth-child(even) {
+      background-color: #eee;
+    }
+    table#t01 tr:nth-child(odd) {
+    background-color:#fff;
+    }
+    table#t01 th {
+      background-color: #333;
+      color: white;
+    }
+  </style>
+</head>
 <body>
-  <p>This demo shows how to show rich push notifications.</p>
-
-  <form>
-    Notification delay: <input id="notification-delay" type="number" value="5"> seconds Notification Time-To-Live:
-    <input id="notification-ttl" type="number" value="0"> seconds
-  </form>
-
-  <button id="doIt">Try to conquer Italy!</button>
+  <div id="subscriptions">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th><img width="30px" src="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-refresh-128.png" id="refresh"/></th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
 
   <script>
-    var endpoint;
-    var key;
-    var auth;
+    var pushSubscription;
 
     navigator.serviceWorker.register('service-worker.js')
       .then((registration) => {
@@ -31,33 +59,49 @@
 
           });
       }).then((subscription) => {
-        debugger;
-        endpoint = subscription.endpoint;
-        key = subscription.getKey('p256dh');
-        auth = subscription.getKey('auth');
-
+        pushSubscription = JSON.stringify(subscription);
+        const payload = Object.assign(JSON.parse(pushSubscription), {name: 'ruseu'});
         fetch('https://ruseu-web-push.herokuapp.com/register', {
           method: 'post',
           headers: {
             'Content-type': 'application/json'
           },
-          body: JSON.stringify({name: 'ruseu', endpoint: endpoint, key: key, auth: auth}),
+          body: JSON.stringify(payload),
         });
       });
 
-    document.getElementById('doIt').onclick = () => {
-      // var delay = document.getElementById('notification-delay').value;
-      // var ttl = document.getElementById('notification-ttl').value;
-      console.log('endpoint', endpoint);
+    function sendPushNotification(subscription) {
+      console.log(subscription, 'send');
       fetch('https://ruseu-web-push.herokuapp.com/sendNotification',
         {
           method: 'post',
           headers: {
             'Content-type': 'application/json'
           },
-          body: JSON.stringify({endpoint: endpoint, key: key, auth: auth}),
+          body: subscription,
         }
       );
+    };
+
+    document.getElementById('refresh').onclick = () => {
+      fetch('https://ruseu-web-push.herokuapp.com/subscriptions')
+      .then((response) => response.json())
+      .then((response) => {
+        let tbody = document.querySelector('tbody');
+        let html = response.reduce((prev, curr) => {
+          const name = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+          const subscription = JSON.stringify({endpoint: curr.endpoint, keys: curr.keys});
+          console.log(subscription, 'send1');
+          return `
+            ${prev}
+            <tr>
+              <td>${name}</td>
+              <td><button onclick='sendPushNotification(${subscription})'>PUSH IT!</button></td>
+            </tr>
+          `;
+        }, '');
+        tbody.innerHTML = html;
+      });
     };
 
     function urlBase64ToUint8Array(base64String) {
