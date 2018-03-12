@@ -53,9 +53,9 @@ app.post('/register', (req, res) => {
 
 app.post('/sendNotification', (req, res) => {
   const subscription = req.body;
-  const payload = 'working';
+  const payload = {success: true, lang: 'en', body: 'Push notification', title: 'New push notification', email: 'drus@qdqmedia.com', icon: 'land-logo.png'};
   webPush
-  .sendNotification(subscription, payload)
+  .sendNotification(subscription, JSON.stringify(payload))
   .then(() => {
     console.log("push notification has been sent");
     res.sendStatus(201);

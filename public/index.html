@@ -71,14 +71,13 @@
       });
 
     function sendPushNotification(subscription) {
-      console.log(subscription, 'send');
       fetch('https://ruseu-web-push.herokuapp.com/sendNotification',
         {
           method: 'post',
           headers: {
             'Content-type': 'application/json'
           },
-          body: subscription,
+          body: JSON.stringify(subscription),
         }
       );
     };
@@ -91,7 +90,6 @@
         let html = response.reduce((prev, curr) => {
           const name = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
           const subscription = JSON.stringify({endpoint: curr.endpoint, keys: curr.keys});
-          console.log(subscription, 'send1');
           return `
             ${prev}
             <tr>
