@@ -4,8 +4,7 @@ const cors = require('cors')
 const webPush = require('web-push');
 const PORT = process.env.PORT || 3000;
 const path = require('path');
-
-
+const bodyParser = require('body-parser');
 
 
 webPush.setVapidDetails(
@@ -26,20 +25,21 @@ const pushSubscription = {
 
 let subscriptions = [];
 
+app.use(bodyParser.json())
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.sendfile(__dirname + "/public/index.html")
 });
-app.get('/testing', (req, res) => {
-  res.sendStatus(200);
+app.get('/subscriptions', (req, res) => {
+  res.send(JSON.stringify(subscriptions));
 })
 
 app.post('/register', (req, res) => {
   console.log(req.body, 'server body');
-  const subscription = JSON.parse(req.body);
+  const subscription = req.body;
   if (subscriptions.some((s) => s.name === subscription.name)) {
-    res.sendStatus(201);
+    res.sendStatus(200);
   } else {
     subscriptions.push(subscription);
     res.sendStatus(201);
@@ -47,10 +47,10 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/sendNotification', (req, res) => {
-  console.log(req.body, 'body');
-  const subscription = JSON.parse(req.body);
+  const subscription = Object.assign(pushSubscription, {endpoint: req.body.endpoint});
+  console.log(JSON.stringify(subscription), 'pushNotification');
   webPush
-  .sendNotification(Object.assign(pushSubscription, {endpoint: subscription.endpoint}), 'working')
+  .sendNotification(pushSubscription, 'working')
   .then(() => {
     console.log("push notification has been sent");
     res.sendStatus(201);
