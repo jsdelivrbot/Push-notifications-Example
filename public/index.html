@@ -12,6 +12,7 @@
 
   <script>
     var endpoint;
+
     navigator.serviceWorker.register('service-worker.js')
       .then((registration) => {
         return registration.pushManager.getSubscription()
@@ -29,24 +30,27 @@
           });
       }).then((subscription) => {
         endpoint = subscription.endpoint;
+
         fetch('https://ruseu-web-push.herokuapp.com/register', {
           method: 'post',
           headers: {
             'Content-type': 'application/json'
           },
-          body: JSON.stringify({
-            endpoint: subscription.endpoint,
-          }),
+          body: JSON.stringify({name: 'ruseu', endpoint: subscription.endpoint}),
         });
       });
 
     document.getElementById('doIt').onclick = () => {
-      var delay = document.getElementById('notification-delay').value;
-      var ttl = document.getElementById('notification-ttl').value;
-      fetch('https://ruseu-web-push.herokuapp.com/sendNotification?endpoint=' + endpoint + '&delay=' + delay +
-        '&ttl=' + ttl,
+      // var delay = document.getElementById('notification-delay').value;
+      // var ttl = document.getElementById('notification-ttl').value;
+      console.log('endpoint', endpoint);
+      fetch('https://ruseu-web-push.herokuapp.com/sendNotification',
         {
           method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify({endpoint: endpoint})
         }
       );
     };
