@@ -60,7 +60,8 @@
           });
       }).then((subscription) => {
         pushSubscription = JSON.stringify(subscription);
-        const payload = Object.assign(JSON.parse(pushSubscription), {name: 'ruseu'});
+        const name = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        const payload = Object.assign(JSON.parse(pushSubscription), {name: name});
         fetch('https://ruseu-web-push.herokuapp.com/register', {
           method: 'post',
           headers: {
@@ -88,12 +89,11 @@
       .then((response) => {
         let tbody = document.querySelector('tbody');
         let html = response.reduce((prev, curr) => {
-          const name = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
           const subscription = JSON.stringify({endpoint: curr.endpoint, keys: curr.keys});
           return `
             ${prev}
             <tr>
-              <td>${name}</td>
+              <td>${curr.name}</td>
               <td><button onclick='sendPushNotification(${subscription})'>PUSH IT!</button></td>
             </tr>
           `;
