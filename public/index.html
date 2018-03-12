@@ -44,9 +44,8 @@
   <script>
     var pushSubscription;
 
-    navigator.serviceWorker.register('service-worker.js')
+    navigator.serviceWorker.register('service-worker-1.0.js')
       .then((registration) => {
-        registration.update();
         return registration.pushManager.getSubscription()
           .then((subscription) => {
             if (subscription) {
