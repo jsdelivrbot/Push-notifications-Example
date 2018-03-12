@@ -53,7 +53,14 @@ app.post('/register', (req, res) => {
 
 app.post('/sendNotification', (req, res) => {
   const subscription = req.body;
-  const payload = {success: true, lang: 'en', body: 'Push notification', title: 'New push notification', email: 'drus@qdqmedia.com', icon: 'land-logo.png'};
+  const payload = {
+    success: true,
+    lang: 'en',
+    body: 'Push notification',
+    title: 'New push notification',
+    email: 'drus@qdqmedia.com',
+    icon: 'https://blogs.glowscotland.org.uk/cl/strathdevonprimary/files/2015/11/success-icon.png'
+  };
   webPush
   .sendNotification(subscription, JSON.stringify(payload))
   .then(() => {
