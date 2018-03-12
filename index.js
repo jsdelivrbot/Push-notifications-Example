@@ -53,18 +53,31 @@ app.post('/register', (req, res) => {
 
 app.post('/sendNotification', (req, res) => {
   const subscription = req.body;
+
   const payload = {
-    success: true,
-    lang: 'en',
-    body: 'Push notification',
-    title: 'New push notification',
-    email: 'drus@qdqmedia.com',
-    icon: 'https://blogs.glowscotland.org.uk/cl/strathdevonprimary/files/2015/11/success-icon.png'
+    title: 'New Push Notifications',
+    options: {
+      lang: 'en',
+      body: 'Push Notification Body',
+      icon: 'https://blogs.glowscotland.org.uk/cl/strathdevonprimary/files/2015/11/success-icon.png',
+      vibrate: [500, 100, 500],
+      actions: [
+        {
+          action: 'coffee-action',
+          title: 'Coffee',
+          icon: 'http://www.freepngimg.com/download/coffee/2-2-coffee-png-clipart.png'
+        },
+        {
+          action: 'doughnut-action',
+          title: 'Doughnut',
+          icon: 'https://cdn2.iconfinder.com/data/icons/lovely-donuts/16/purple_donut-256.png'
+        }
+      ]
+    }
   };
   webPush
   .sendNotification(subscription, JSON.stringify(payload))
   .then(() => {
-    console.log("push notification has been sent");
     res.sendStatus(201);
   })
   .catch((error) => {
