@@ -46,6 +46,7 @@
 
     navigator.serviceWorker.register('service-worker.js')
       .then((registration) => {
+        registration.update();
         return registration.pushManager.getSubscription()
           .then((subscription) => {
             if (subscription) {
