@@ -18,9 +18,11 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   if (event.action === 'accept') {
+    console.log('accepter');
     clients.openWindow("/accept");
   }
   else {
+    console.log('declined');
     clients.openWindow("/dismiss");
   }
 }, false);
