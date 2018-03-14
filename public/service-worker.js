@@ -31,9 +31,12 @@ self.addEventListener('notificationclick', (event) => {
 
     self.clients.matchAll().then((clients) => Promise.all(clients.map((client) => {
       console.log('client event accept', client, event);
-      return client.postMessage({
-        msg: 'accepted'
-      });
+      if (client.focused) {
+        return client.postMessage({
+          msg: 'accepted'
+        });
+      }
+      return Promise.resolve();
     })));
 
     // clients.openWindow("/accept");
@@ -42,9 +45,12 @@ self.addEventListener('notificationclick', (event) => {
 
     self.clients.matchAll().then((clients) => Promise.all(clients.map((client) => {
       console.log('client event decline', client, event);
-      return client.postMessage({
-        msg: "Declined"
-      });
+      if (client.focused) {
+        return client.postMessage({
+          msg: "Declined"
+        });
+      }
+      return Promise.resolve();
     })));
     // clients.openWindow("/dismiss");
   }

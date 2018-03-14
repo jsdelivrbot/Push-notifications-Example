@@ -26,6 +26,7 @@
       color: white;
     }
   </style>
+  <script src="./favicon.js"></script>
 </head>
 <body>
   <div id="subscriptions">
@@ -42,6 +43,11 @@
   </div>
 
   <script>
+    var favicon=new Favico({
+        animation:'slide'
+    });
+    favicon.badge(1);
+
     var pushSubscription;
     if ('serviceWorker' in navigator) {
 
