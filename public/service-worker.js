@@ -20,39 +20,40 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title, data.options)
   );
+  self.clients.matchAll().then((clients) => Promise.all(clients.map((client) => {
+    if (client.focused) {
+      return client.postMessage({
+        type: 'new-notification'
+      });
+    }
+    return Promise.resolve();
+  })));
+
 });
 
 self.addEventListener('notificationclick', (event) => {
   var messageId = event.notification.data;
 
   event.notification.close();
+  self.clients.matchAll().then((clients) => Promise.all(clients.map((client) => {
+    console.log('client event accept', client, event);
+    if (client.focused) {
+      return client.postMessage({
+        type: 'close-notification'
+      });
+    }
+    return Promise.resolve();
+  })));
 
   if (event.action === 'accept') {
 
-    self.clients.matchAll().then((clients) => Promise.all(clients.map((client) => {
-      console.log('client event accept', client, event);
-      if (client.focused) {
-        return client.postMessage({
-          msg: 'accepted'
-        });
-      }
-      return Promise.resolve();
-    })));
+    clients.openWindow("/accept");
 
-    // clients.openWindow("/accept");
   }
   else {
 
-    self.clients.matchAll().then((clients) => Promise.all(clients.map((client) => {
-      console.log('client event decline', client, event);
-      if (client.focused) {
-        return client.postMessage({
-          msg: "Declined"
-        });
-      }
-      return Promise.resolve();
-    })));
-    // clients.openWindow("/dismiss");
+    clients.openWindow("/dismiss");
+
   }
 }, false);
 

@@ -57,7 +57,7 @@ app.post('/sendNotification', (req, res) => {
         {
           action: 'accept',
           title: 'Yes, awesome',
-          icon: 'http://dryicons.com/uploads/icon/preview/2810/icon_grid_1x_accept.png'
+          icon: 'https://dryicons.com/uploads/icon/preview/2810/icon_grid_1x_accept.png'
         },
         {
           action: 'dismiss',

@@ -44,10 +44,9 @@
   </div>
 
   <script>
-    var favicon=new Favico({
-        animation:'slide'
-    });
-    favicon.badge(1);
+    var notificationsCount = 0;
+    var favicon=new Favico({animation:'slide'});
+    favicon.badge(notificationsCount);
 
     var pushSubscription;
     if ('serviceWorker' in navigator) {
@@ -82,7 +81,19 @@
 
         navigator.serviceWorker.addEventListener('message', function(event) {
           alert('received message from service worker');
-          console.log(event, "frontend event message");
+          switch (event.data.type) {
+            case 'new-notification':
+            notificationsCount += 1;
+              break;
+            case 'close-notification':
+            notificationsCount -= 1;
+              break;
+            default:
+              break;
+          }
+
+          favicon.badge(notificationsCount);
+
         });
 
     } else {
