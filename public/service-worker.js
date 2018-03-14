@@ -18,11 +18,28 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   if (event.action === 'accept') {
-    console.log('accepter');
-    clients.openWindow("/accept");
+
+    self.clients.matchAll().then((clients) => Promise.all(clients.map((client) => {
+      console.log('client event accept', client, event);
+      return client.postMessage({
+        msg: 'accepted'
+      });
+    })));
+
+    // clients.openWindow("/accept");
   }
   else {
-    console.log('declined');
-    clients.openWindow("/dismiss");
+
+    self.clients.matchAll().then((clients) => Promise.all(clients.map((client) => {
+      console.log('client event decline', client, event);
+      return client.postMessage({
+        msg: "Declined"
+      });
+    })));
+    // clients.openWindow("/dismiss");
   }
 }, false);
+
+self.addEventListener('message', function(event){
+  console.log("SW Received Message: " + event.data);
+});

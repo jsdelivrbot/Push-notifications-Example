@@ -43,34 +43,44 @@
 
   <script>
     var pushSubscription;
+    if ('serviceWorker' in navigator) {
 
-    navigator.serviceWorker.register('service-worker.js')
-      .then((registration) => {
-        return registration.pushManager.getSubscription()
-          .then((subscription) => {
-            if (subscription) {
-              return subscription;
-            }
-            const vapidPublicKey = 'BKOWm3Iz0Yg-k84Uk8a1YWaofSNAsYh3LRxVYPg6HVoivm2EH4s1Y73RQUsRN7m6rVeL9H33bxL9HCxs7d2DEvY';
-            const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
-            return registration.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: convertedVapidKey
+      navigator.serviceWorker.register('service-worker.js')
+        .then((registration) => {
+          return registration.pushManager.getSubscription()
+            .then((subscription) => {
+              if (subscription) {
+                return subscription;
+              }
+              const vapidPublicKey = 'BKOWm3Iz0Yg-k84Uk8a1YWaofSNAsYh3LRxVYPg6HVoivm2EH4s1Y73RQUsRN7m6rVeL9H33bxL9HCxs7d2DEvY';
+              const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+              return registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: convertedVapidKey
+              });
+
             });
-
+        }).then((subscription) => {
+          pushSubscription = JSON.stringify(subscription);
+          const name = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+          const payload = Object.assign(JSON.parse(pushSubscription), {name: name});
+          fetch('https://ruseu-web-push.herokuapp.com/register', {
+            method: 'post',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify(payload),
           });
-      }).then((subscription) => {
-        pushSubscription = JSON.stringify(subscription);
-        const name = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        const payload = Object.assign(JSON.parse(pushSubscription), {name: name});
-        fetch('https://ruseu-web-push.herokuapp.com/register', {
-          method: 'post',
-          headers: {
-            'Content-type': 'application/json'
-          },
-          body: JSON.stringify(payload),
         });
-      });
+
+        navigator.serviceWorker.addEventListener('message', function(event) {
+          alert('received message from service worker');
+          console.log(event, "frontend event message");
+        });
+
+    } else {
+      alert('Service worker not working in your navigator');
+    }
 
     function sendPushNotification(subscription) {
       fetch('https://ruseu-web-push.herokuapp.com/sendNotification',
