@@ -1,3 +1,9 @@
+self.addEventListener('install', function(event) {
+
+  if (self.skipWaiting) self.skipWaiting();
+
+});
+
 self.addEventListener('push', (event) => {
   let data = event.data.json();
 
@@ -7,7 +13,6 @@ self.addEventListener('push', (event) => {
 });
 
 self.addEventListener('notificationclick', (event) => {
-  console.log(event);
   var messageId = event.notification.data;
 
   event.notification.close();
