@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 
 
 var vapidDetails = {
-  subject: 'mailto:drus@qdqmedia.com',
+  subject: 'mailto:bidstopper@gmail.com',
   publicKey: 'BKOWm3Iz0Yg-k84Uk8a1YWaofSNAsYh3LRxVYPg6HVoivm2EH4s1Y73RQUsRN7m6rVeL9H33bxL9HCxs7d2DEvY',
   privateKey: 'iyFVXcBo_cNBxK_g1wnsm_J8O_Lg0wmnwKUK7dF6Kn8'
 }
